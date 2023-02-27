@@ -3,18 +3,25 @@ import './App.css';
 import { useState, useEffect } from 'react'
 import ArticleList from './components/ArticleList';
 import Form from './components/Form';
+import { useCookies } from 'react-cookie';
+import { useHistory } from "react-router-dom";
+
+
 
 function App() {
 
   const [articles, setArticles ] = useState([])
   const [editArticle, setEditArticle ] = useState(null)
+  const [token, setToken, removeToken] = useCookies(['mytoken'])
+  let history = useHistory()
+  
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/api/articles/', {
       'method':'GET',
       headers:{
         'Content-Type':'application/json',
-        'Authorization':'Token a0cbae7f7841055b1943141750b44b64ef0d2c40'
+        'Authorization':`Token ${token['mytoken']}`
       }
     })
     .then(resp => resp.json())
@@ -42,6 +49,19 @@ function App() {
 
   const articleForm = () => {
     setEditArticle({title:'', description:''})
+
+  }
+
+  useEffect(() =>{
+    if(!token['mytoken']) {
+      //history.push('/')
+      window.location.href = '/'
+    }
+  }, [token]);
+  
+
+  const logoutBtn = () => {
+    removeToken(['mytoken'])
 
   }
 
@@ -76,9 +96,13 @@ function App() {
           <button onClick = {articleForm} className='btn btn-primary'>Insert Article</button>
 
         </div>
+        <div className='col'>
+          <button onClick = {logoutBtn} className='btn btn-primary'>LogOut</button>
+
+        </div>
         </div>
         <ArticleList articles = {articles} editBtn= {editBtn} deleteBtn = {deleteBtn}/>
-        {editArticle  ? <Form article = {editArticle} updatedInformation = {updatedInformation} insertedInformation = {insertedInformation} />: null}
+        {editArticle  ? <Form article = {editArticle} updatedInformation = {updatedInformation} insertedInformation = {insertedInformation}/> : null}
 
              
     </div>

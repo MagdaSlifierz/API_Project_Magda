@@ -3,7 +3,6 @@
   text-align: center;
   background-color: #045606;
   color: white;
-  justify-content: center;
   padding: 20px;
 }
 
@@ -11,8 +10,4 @@
   background-color:rgb(166, 234, 20);
 }
 
-
-.App-link {
-  color: #61dafb;
-}
 
